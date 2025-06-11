@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -35,40 +36,80 @@ namespace ITCourseCertificateV001
 
         private void btnMengelolaMateri_Click(object sender, EventArgs e)
         {
-            FormKelolaMateri formMateri = new FormKelolaMateri
-            {
-                StartPosition = FormStartPosition.CenterScreen,
-                WindowState = FormWindowState.Maximized
-            };
-
+            FormKelolaMateri kelola = new FormKelolaMateri(this.UserID, this);
             this.Hide();
-            formMateri.Show();
+            kelola.Show();
         }
 
         private void btnMengerjakanKuis_Click(object sender, EventArgs e)
         {
-            FormKuis formKuis = new FormKuis
+            FormTampilanKerjaKuis kerjaKuis = new FormTampilanKerjaKuis
             {
                 UserID = this.UserID,
-                KursusID = 1,
                 StartPosition = FormStartPosition.CenterScreen,
                 WindowState = FormWindowState.Maximized
             };
 
             this.Hide();
-            formKuis.Show();
+            kerjaKuis.Show();
         }
 
         private void btnMengelolaKuis_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Fitur Mengelola Kuis masih dalam pengembangan.",
-                "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            FormRiwayatKuis riwayat = new FormRiwayatKuis
+            {
+                UserID = this.UserID,
+                StartPosition = FormStartPosition.CenterScreen,
+                WindowState = FormWindowState.Maximized
+            };
+
+            this.Hide();
+            riwayat.Show();
         }
 
         private void btnSertifikat_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Fitur Sertifikat belum tersedia.",
-                "Informasi", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            int certificateId = GetCertificateIdForUser(UserID);
+
+            if (certificateId > 0)
+            {
+                FormCertificateViewer viewer = new FormCertificateViewer(certificateId)
+                {
+                    StartPosition = FormStartPosition.CenterScreen,
+                    WindowState = FormWindowState.Maximized
+                };
+
+                this.Hide();
+                viewer.Show();
+            }
+            else
+            {
+                MessageBox.Show("Sertifikat belum tersedia untuk akun Anda. Silakan selesaikan kuis terlebih dahulu.",
+                                "Sertifikat Tidak Ditemukan", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private int GetCertificateIdForUser(int userId)
+        {
+            int certId = 0;
+            string connStr = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True;";
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @UserID ORDER BY TanggalDapat DESC";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+
+                conn.Open();
+                var result = cmd.ExecuteScalar();
+
+                if (result != null)
+                {
+                    certId = Convert.ToInt32(result);
+                }
+            }
+
+            return certId;
         }
 
         private void btnLogout_Click(object sender, EventArgs e)

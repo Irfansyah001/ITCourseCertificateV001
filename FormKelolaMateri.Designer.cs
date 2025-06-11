@@ -188,7 +188,7 @@ namespace ITCourseCertificateV001
             // 
             this.btnDelete.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDelete.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnDelete.Location = new System.Drawing.Point(813, 62);
+            this.btnDelete.Location = new System.Drawing.Point(697, 103);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(110, 35);
             this.btnDelete.TabIndex = 13;
@@ -199,7 +199,7 @@ namespace ITCourseCertificateV001
             // 
             this.btnExport.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExport.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnExport.Location = new System.Drawing.Point(697, 103);
+            this.btnExport.Location = new System.Drawing.Point(881, 103);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(110, 35);
             this.btnExport.TabIndex = 14;
@@ -210,7 +210,7 @@ namespace ITCourseCertificateV001
             // 
             this.btnImport.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnImport.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnImport.Location = new System.Drawing.Point(813, 103);
+            this.btnImport.Location = new System.Drawing.Point(881, 65);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(110, 35);
             this.btnImport.TabIndex = 15;
@@ -221,7 +221,7 @@ namespace ITCourseCertificateV001
             // 
             this.btnPrintPDF.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnPrintPDF.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.btnPrintPDF.Location = new System.Drawing.Point(929, 62);
+            this.btnPrintPDF.Location = new System.Drawing.Point(997, 65);
             this.btnPrintPDF.Name = "btnPrintPDF";
             this.btnPrintPDF.Size = new System.Drawing.Size(110, 35);
             this.btnPrintPDF.TabIndex = 16;
@@ -256,6 +256,7 @@ namespace ITCourseCertificateV001
             this.dgvMateri.Size = new System.Drawing.Size(1900, 756);
             this.dgvMateri.TabIndex = 18;
             this.dgvMateri.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMateri_CellClick);
+            this.dgvMateri.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvMateri_CellContentClick);
             // 
             // FormKelolaMateri
             // 

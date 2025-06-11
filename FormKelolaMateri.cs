@@ -1,5 +1,6 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.VisualBasic.ApplicationServices;
 using OfficeOpenXml;
 using System;
 using System.Data;
@@ -15,10 +16,14 @@ namespace ITCourseCertificateV001
     {
         private string connStr = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
         private BindingSource bsKursus = new BindingSource();
+        private int currentUserID;
+        private Form previousForm;
 
-        public FormKelolaMateri()
+        public FormKelolaMateri(int userID, FormDashboard dashboardForm)
         {
             InitializeComponent();
+            currentUserID = userID;
+            previousForm = dashboardForm;
         }
 
 
@@ -56,6 +61,25 @@ namespace ITCourseCertificateV001
                 LoadMateri();
         }
 
+        private void dgvMateri_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dgvMateri.Columns[e.ColumnIndex].Name == "LinkVideo")
+            {
+                string url = dgvMateri.Rows[e.RowIndex].Cells[e.ColumnIndex].Value?.ToString();
+                if (!string.IsNullOrEmpty(url))
+                {
+                    try
+                    {
+                        System.Diagnostics.Process.Start(url);
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Gagal membuka link.");
+                    }
+                }
+            }
+        }
+
         private void LoadMateri()
         {
             if (cmbKursus.SelectedValue == null) return;
@@ -72,6 +96,9 @@ namespace ITCourseCertificateV001
                 dgvMateri.DataSource = dt;
                 dgvMateri.Columns["MateriID"].Visible = false;
                 dgvMateri.Columns["KursusID"].Visible = false;
+                dgvMateri.Columns["LinkVideo"].DefaultCellStyle.ForeColor = Color.Blue;
+                dgvMateri.Columns["LinkVideo"].DefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 9, System.Drawing.FontStyle.Underline);
+                dgvMateri.Columns["LinkVideo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             }
         }
 
@@ -371,9 +398,9 @@ namespace ITCourseCertificateV001
                 MessageBox.Show("PDF berhasil dibuat.");
             }
         }
-
         private void btnBack_Click(object sender, EventArgs e)
         {
+            previousForm.Show();
             this.Close();
         }
     }
