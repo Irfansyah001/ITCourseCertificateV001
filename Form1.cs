@@ -11,12 +11,24 @@ namespace ITCourseCertificateV001
         public FormLogin()
         {
             InitializeComponent();
+
+
+            this.WindowState = FormWindowState.Maximized;
+            this.MinimizeBox = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.FromArgb(20, 40, 30);
         }
+
 
         private void FormLogin_Load(object sender, EventArgs e)
         {
-            // Menempatkan panel login di tengah form
-            panelContainer.Anchor = AnchorStyles.None;
+            CenterLoginPanel();
+            this.Resize += (s, ev) => CenterLoginPanel(); // Supaya tetap di tengah saat resize
+        }
+
+        private void CenterLoginPanel()
+        {
             panelContainer.Left = (this.ClientSize.Width - panelContainer.Width) / 2;
             panelContainer.Top = (this.ClientSize.Height - panelContainer.Height) / 2;
         }
@@ -26,7 +38,6 @@ namespace ITCourseCertificateV001
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text.Trim();
 
-            // Validasi input kosong
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Username dan Password wajib diisi.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -57,7 +68,6 @@ namespace ITCourseCertificateV001
 
                     MessageBox.Show("Login berhasil. Selamat datang, " + fullName, "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    // GANTI KE FORM DASHBOARD
                     FormDashboard dashboard = new FormDashboard
                     {
                         FullName = fullName,
@@ -74,16 +84,6 @@ namespace ITCourseCertificateV001
                     MessageBox.Show("Username atau password salah.", "Gagal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-        }
-
-        private void lblTitle_Click(object sender, EventArgs e)
-        {
-            // opsional
-        }
-
-        private void pictureBoxLogo_Click(object sender, EventArgs e)
-        {
-            // opsional
         }
     }
 }
