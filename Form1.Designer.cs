@@ -81,7 +81,7 @@
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(450, 50);
             this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "Selamat Tidur - Login";
+            this.lblTitle.Text = "Selamat Testing - Login";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblUsername
