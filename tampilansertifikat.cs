@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
@@ -27,7 +28,8 @@ namespace ITCourseCertificateV001
 
         private void LoadCertificateReport(int certificateId)
         {
-            string connectionString = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True;";
+            //string connectionString = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True;";
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
             string query = @"
                 SELECT 
                     c.CertificateID,
@@ -46,7 +48,7 @@ namespace ITCourseCertificateV001
                 WHERE c.CertificateID = @CertificateID;
             ";
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connString))
             using (SqlCommand cmd = new SqlCommand(query, conn))
             using (SqlDataAdapter da = new SqlDataAdapter(cmd))
             {

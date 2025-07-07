@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
@@ -23,6 +24,13 @@ namespace ITCourseCertificateV001
 
         private void FormDashboard_Load(object sender, EventArgs e)
         {
+            // Jika FullName belum diatur (misalnya, saat kembali dari form lain), ambil dari DB
+            // Pastikan UserID juga valid
+            if (string.IsNullOrEmpty(this.FullName) && this.UserID > 0)
+            {
+                // Panggil fungsi helper untuk mendapatkan nama
+                this.FullName = GetUserName(this.UserID);
+            }
             // Tampilkan informasi pengguna
             lblWelcome.Text = $"Selamat datang, {FullName}";
             lblUserID.Text = $"ID Anda: {UserID}";
@@ -32,6 +40,44 @@ namespace ITCourseCertificateV001
 
             // Atur posisi awal tombol logout
             FormDashboard_Resize(sender, e);
+        }
+
+        // Tambahkan fungsi helper ini di dalam kelas FormDashboard
+        // Fungsi ini akan mengambil nama pengguna dari database
+        private string GetUserName(int userId)
+        {
+            string result = "Pengguna"; // Nilai default jika nama tidak ditemukan atau error
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = "SELECT FullName FROM Users WHERE UserID = @id";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", userId);
+                        object dbResult = cmd.ExecuteScalar(); // Gunakan ExecuteScalar karena hanya mengambil satu nilai
+
+                        if (dbResult != null)
+                        {
+                            result = dbResult.ToString();
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Gagal mengambil nama pengguna dari database: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Pertimbangkan untuk melakukan logging error di sini
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Pertimbangkan untuk melakukan logging error di sini
+            }
+            return result;
         }
 
         private void btnMengelolaMateri_Click(object sender, EventArgs e)
@@ -75,6 +121,7 @@ namespace ITCourseCertificateV001
             {
                 FormCertificateViewer viewer = new FormCertificateViewer(certificateId)
                 {
+                    UserID = this.UserID,
                     StartPosition = FormStartPosition.CenterScreen,
                     WindowState = FormWindowState.Maximized
                 };
@@ -92,21 +139,39 @@ namespace ITCourseCertificateV001
         private int GetCertificateIdForUser(int userId)
         {
             int certId = 0;
-            string connStr = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True;";
+            // Ambil connection string dari App.config
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            try
             {
-                string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @UserID ORDER BY TanggalDapat DESC";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-
-                conn.Open();
-                var result = cmd.ExecuteScalar();
-
-                if (result != null)
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    certId = Convert.ToInt32(result);
+                    conn.Open();
+                    string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @UserID ORDER BY TanggalDapat DESC";
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+
+                        var result = cmd.ExecuteScalar();
+
+                        if (result != null)
+                        {
+                            certId = Convert.ToInt32(result);
+                        }
+                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                // Tangani error database, misalnya koneksi gagal atau query bermasalah
+                MessageBox.Show("Terjadi masalah koneksi database saat mengambil sertifikat: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Anda bisa log ex di sini
+            }
+            catch (Exception ex)
+            {
+                // Tangani error umum lainnya
+                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil sertifikat: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Anda bisa log ex di sini
             }
 
             return certId;

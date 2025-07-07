@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
@@ -12,7 +13,8 @@ namespace ITCourseCertificateV001
         private int indeksSoalSaatIni = 0;
         private int durasiDetik = 60;
         private Timer timer;
-        private string connectionString = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
+        //private string connectionString = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
+        string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
         private bool kuisSedangBerlangsung = false;
         private bool sudahTampilkanWaktuHabis = false;
 
@@ -31,7 +33,7 @@ namespace ITCourseCertificateV001
 
         private void MuatKursusDariDatabase()
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = "SELECT KursusID, JudulKursus FROM DataKursus";
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -107,7 +109,7 @@ namespace ITCourseCertificateV001
         {
             daftarSoal.Clear();
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connString))
             {
                 string query = "SELECT Pertanyaan, PilihanA, PilihanB, PilihanC, PilihanD, JawabanBenar FROM Kuis WHERE KursusID = @kursusID";
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -272,7 +274,7 @@ namespace ITCourseCertificateV001
                 certificateID = GenerateCertificateID(); // pastikan metode ini tersedia di kelas
 
                 // ⬇️ Tambahkan kode ini
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
                     string query = @"INSERT INTO Certificate0 (UserID, KursusID, Nilai, TanggalDapat, IsPrinted) 
                          VALUES (@UserID, @KursusID, @Nilai, @TanggalDapat, @IsPrinted)";

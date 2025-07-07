@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
@@ -12,8 +13,7 @@ namespace ITCourseCertificateV001
         public int UserID { get; set; }
         public int NilaiAkhir { get; set; }
         public string CertificateIDuniq { get; set; }
-
-        private string NamaLengkapUser;
+        public string NamaLengkapUser { get; set; }
 
         public FormHasilKuis()
         {
@@ -85,36 +85,74 @@ namespace ITCourseCertificateV001
         private int GetCertificateIDByUserKursus(int userId, int kursusId)
         {
             int result = 0;
-            string connString = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
-            using (SqlConnection conn = new SqlConnection(connString))
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+
+            try
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @uid AND KursusID = @kid ORDER BY TanggalDapat DESC", conn);
-                cmd.Parameters.AddWithValue("@uid", userId);
-                cmd.Parameters.AddWithValue("@kid", kursusId);
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    result = Convert.ToInt32(reader["CertificateID"]);
-                }
+                    conn.Open();
+                    string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @uid AND KursusID = @kid ORDER BY TanggalDapat DESC";
+                    using (SqlCommand cmd = new SqlCommand(query, conn)) // Tambahkan 'using' untuk SqlCommand
+                    {
+                        cmd.Parameters.AddWithValue("@uid", userId);
+                        cmd.Parameters.AddWithValue("@kid", kursusId);
+
+                        // Gunakan ExecuteScalar jika hanya mengambil 1 nilai/kolom. Lebih efisien dari SqlDataReader jika hanya itu yang dibutuhkan.
+                        object dbResult = cmd.ExecuteScalar();
+
+                        if (dbResult != null && dbResult != DBNull.Value) // Periksa juga DBNull.Value
+                        {
+                            result = Convert.ToInt32(dbResult);
+                        }
+                    } // end using SqlCommand
+                } // end using SqlConnection
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Terjadi masalah database saat mengambil ID Sertifikat: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini untuk debugging lebih lanjut
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil ID Sertifikat: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
             }
             return result;
         }
 
         private string GetUserName(int userId)
         {
-            string result = "";
-            string connString = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
-            using (SqlConnection conn = new SqlConnection(connString))
+            string result = "Pengguna Tidak Dikenal"; // Nilai default yang lebih deskriptif
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+
+            try
             {
-                conn.Open();
-                SqlCommand cmd = new SqlCommand("SELECT FullName FROM Users WHERE UserID = @id", conn);
-                cmd.Parameters.AddWithValue("@id", userId);
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    result = reader["FullName"].ToString();
-                }
+                    conn.Open();
+                    string query = "SELECT FullName FROM Users WHERE UserID = @id";
+                    using (SqlCommand cmd = new SqlCommand(query, conn)) // Tambahkan 'using' untuk SqlCommand
+                    {
+                        cmd.Parameters.AddWithValue("@id", userId);
+                        object dbResult = cmd.ExecuteScalar(); // Gunakan ExecuteScalar
+
+                        if (dbResult != null && dbResult != DBNull.Value)
+                        {
+                            result = dbResult.ToString();
+                        }
+                    } // end using SqlCommand
+                } // end using SqlConnection
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Terjadi masalah database saat mengambil nama pengguna: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
             }
             return result;
         }

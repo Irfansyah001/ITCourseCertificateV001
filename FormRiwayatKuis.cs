@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
@@ -22,9 +23,10 @@ namespace ITCourseCertificateV001
         private void LoadRiwayatKuis()
         {
             DataTable dt = new DataTable();
-            string connectionString = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
+            //string connectionString = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
+            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
 
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connString))
             using (SqlCommand cmd = new SqlCommand("sp_GetRiwayatKuisLengkapByUserID", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
