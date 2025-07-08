@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
     public partial class FormHasilKuis : Form
     {
+        //Koneksi kn = new Koneksi();
+        //string strKonek = "";
         public int KursusID { get; set; }
         public string KursusJudul { get; set; }
         public int UserID { get; set; }
@@ -18,11 +20,11 @@ namespace ITCourseCertificateV001
         public FormHasilKuis()
         {
             InitializeComponent();
+            //strKonek = kn.connectionString();
         }
 
         private void FormHasilKuis_Load(object sender, EventArgs e)
         {
-            NamaLengkapUser = GetUserName(UserID);
 
             lblJudul.Text = "Hasil Kuis: " + KursusJudul;
             lblNilai.Text = $"Nilai Akhir Anda: {NilaiAkhir}";
@@ -85,28 +87,38 @@ namespace ITCourseCertificateV001
         private int GetCertificateIDByUserKursus(int userId, int kursusId)
         {
             int result = 0;
-            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0; // Kembalikan default jika string koneksi tidak valid
+            }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
-                    string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @uid AND KursusID = @kid ORDER BY TanggalDapat DESC";
-                    using (SqlCommand cmd = new SqlCommand(query, conn)) // Tambahkan 'using' untuk SqlCommand
+                    //string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @uid AND KursusID = @kid ORDER BY TanggalDapat DESC";
+                    // Menggunakan Stored Procedure untuk mengambil CertificateID
+                    using (SqlCommand cmd = new SqlCommand("GetLatestCertificateIdForUser", conn)) // Tambahkan 'using' untuk SqlCommand
                     {
-                        cmd.Parameters.AddWithValue("@uid", userId);
-                        cmd.Parameters.AddWithValue("@kid", kursusId);
+                        cmd.CommandType = CommandType.StoredProcedure; // Penting: Menentukan bahwa ini adalah Stored Procedure
+                        cmd.Parameters.AddWithValue("@UserID", userId); // @UserID sesuai dengan SP
+                        // Parameter @kid tidak diperlukan di SP GetLatestCertificateIdForUser
+                        // Jika SP GetLatestCertificateIdForUser hanya berdasarkan UserID
+                        // Namun, jika Anda memiliki SP yang spesifik berdasarkan UserID dan KursusID, gunakan itu.
+                        // Untuk saat ini, kita ikuti SP GetLatestCertificateIdForUser yang hanya butuh UserID.
 
-                        // Gunakan ExecuteScalar jika hanya mengambil 1 nilai/kolom. Lebih efisien dari SqlDataReader jika hanya itu yang dibutuhkan.
                         object dbResult = cmd.ExecuteScalar();
 
-                        if (dbResult != null && dbResult != DBNull.Value) // Periksa juga DBNull.Value
+                        if (dbResult != null && dbResult != DBNull.Value)
                         {
                             result = Convert.ToInt32(dbResult);
                         }
-                    } // end using SqlCommand
-                } // end using SqlConnection
+                    }
+                }
             }
             catch (SqlException ex)
             {
@@ -121,40 +133,39 @@ namespace ITCourseCertificateV001
             return result;
         }
 
-        private string GetUserName(int userId)
-        {
-            string result = "Pengguna Tidak Dikenal"; // Nilai default yang lebih deskriptif
-            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+        //private string GetUserName(int userId)
+        //{
+        //    string result = "Pengguna Tidak Dikenal"; // Nilai default yang lebih deskriptif
+        //    //string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
 
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connString))
-                {
-                    conn.Open();
-                    string query = "SELECT FullName FROM Users WHERE UserID = @id";
-                    using (SqlCommand cmd = new SqlCommand(query, conn)) // Tambahkan 'using' untuk SqlCommand
-                    {
-                        cmd.Parameters.AddWithValue("@id", userId);
-                        object dbResult = cmd.ExecuteScalar(); // Gunakan ExecuteScalar
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(strKonek))
+        //        {
+        //            conn.Open();
+        //            string query = "SELECT FullName FROM Users WHERE UserID = @id";
+        //            using (SqlCommand cmd = new SqlCommand(query, conn)) // Tambahkan 'using' untuk SqlCommand
+        //            {
+        //                cmd.Parameters.AddWithValue("@id", userId);
+        //                object dbResult = cmd.ExecuteScalar(); // Gunakan ExecuteScalar
 
-                        if (dbResult != null && dbResult != DBNull.Value)
-                        {
-                            result = dbResult.ToString();
-                        }
-                    } // end using SqlCommand
-                } // end using SqlConnection
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("Terjadi masalah database saat mengambil nama pengguna: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
-            }
-            return result;
-        }
+        //                if (dbResult != null && dbResult != DBNull.Value)
+        //                {
+        //                    result = dbResult.ToString();
+        //                }
+        //            } // end using SqlCommand
+        //        } // end using SqlConnection
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        MessageBox.Show("Terjadi masalah database saat mengambil nama pengguna: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        // Log 'ex' di sini
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //        // Log 'ex' di sini
+        //    }
+        //    return result;
     }
 }

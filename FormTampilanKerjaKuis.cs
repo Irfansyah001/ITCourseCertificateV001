@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
     public partial class FormTampilanKerjaKuis : Form
     {
+        //Koneksi kn = new Koneksi();
+        //string strKonek = "";
+
         private List<Soal> daftarSoal = new List<Soal>();
         private int indeksSoalSaatIni = 0;
         private int durasiDetik = 60;
         private Timer timer;
         //private string connectionString = @"Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
-        string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+        //string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
         private bool kuisSedangBerlangsung = false;
         private bool sudahTampilkanWaktuHabis = false;
 
@@ -23,6 +25,7 @@ namespace ITCourseCertificateV001
         public FormTampilanKerjaKuis()
         {
             InitializeComponent();
+            //strKonek = kn.connectionString(); // Ambil koneksi dari Koneksi.cs
         }
 
         private void FormTampilanKerjaKuis_Load(object sender, EventArgs e)
@@ -33,18 +36,40 @@ namespace ITCourseCertificateV001
 
         private void MuatKursusDariDatabase()
         {
-            using (SqlConnection conn = new SqlConnection(connString))
-            {
-                string query = "SELECT KursusID, JudulKursus FROM DataKursus";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                DataTable dt = new DataTable();
-                dt.Load(reader);
 
-                comboBox1.DisplayMember = "JudulKursus";
-                comboBox1.ValueMember = "KursusID";
-                comboBox1.DataSource = dt;
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(currentConnString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("SELECT KursusID, JudulKursus FROM DataKursus", conn))
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        DataTable dt = new DataTable();
+                        dt.Load(reader);
+
+                        comboBox1.DisplayMember = "JudulKursus";
+                        comboBox1.ValueMember = "KursusID";
+                        comboBox1.DataSource = dt;
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Terjadi masalah database saat memuat daftar kursus: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat memuat daftar kursus: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
             }
         }
 
@@ -109,41 +134,71 @@ namespace ITCourseCertificateV001
         {
             daftarSoal.Clear();
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
             {
-                string query = "SELECT Pertanyaan, PilihanA, PilihanB, PilihanC, PilihanD, JawabanBenar FROM Kuis WHERE KursusID = @kursusID";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@kursusID", kursusID);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                daftarSoal.Clear(); // Pastikan daftar soal kosong jika gagal dimuat
+                return;
+            }
 
-                while (reader.Read())
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
-                    string jawabanBenarChar = reader.GetString(5).ToUpper();
-                    int jawabanBenarIndex = -1;
-
-                    switch (jawabanBenarChar)
+                    conn.Open();
+                    string query = "SELECT Pertanyaan, PilihanA, PilihanB, PilihanC, PilihanD, JawabanBenar, KuisID FROM Kuis WHERE KursusID = @kursusID"; // Tambah KuisID di SELECT
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
                     {
-                        case "A": jawabanBenarIndex = 0; break;
-                        case "B": jawabanBenarIndex = 1; break;
-                        case "C": jawabanBenarIndex = 2; break;
-                        case "D": jawabanBenarIndex = 3; break;
-                    }
-
-                    daftarSoal.Add(new Soal
-                    {
-                        Pertanyaan = reader.GetString(0),
-                        Pilihan = new string[]
+                        cmd.Parameters.AddWithValue("@kursusID", kursusID);
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            reader.IsDBNull(1) ? "" : reader.GetString(1),
-                            reader.IsDBNull(2) ? "" : reader.GetString(2),
-                            reader.IsDBNull(3) ? "" : reader.GetString(3),
-                            reader.IsDBNull(4) ? "" : reader.GetString(4)
-                        },
-                        JawabanBenarIndex = jawabanBenarIndex,
-                        JawabanUserIndex = null
-                    });
+                            while (reader.Read())
+                            {
+                                // Pastikan kolom KuisID ada dan diambil
+                                int kuisID = reader.GetInt32(reader.GetOrdinal("KuisID"));
+
+                                string jawabanBenarChar = reader.GetString(reader.GetOrdinal("JawabanBenar")).ToUpper();
+                                int jawabanBenarIndex = -1;
+
+                                switch (jawabanBenarChar)
+                                {
+                                    case "A": jawabanBenarIndex = 0; break;
+                                    case "B": jawabanBenarIndex = 1; break;
+                                    case "C": jawabanBenarIndex = 2; break;
+                                    case "D": jawabanBenarIndex = 3; break;
+                                }
+
+                                daftarSoal.Add(new Soal
+                                {
+                                    KuisID = kuisID, // Simpan KuisID di objek Soal
+                                    Pertanyaan = reader.GetString(reader.GetOrdinal("Pertanyaan")),
+                                    Pilihan = new string[]
+                                    {
+                                reader.IsDBNull(reader.GetOrdinal("PilihanA")) ? "" : reader.GetString(reader.GetOrdinal("PilihanA")),
+                                reader.IsDBNull(reader.GetOrdinal("PilihanB")) ? "" : reader.GetString(reader.GetOrdinal("PilihanB")),
+                                reader.IsDBNull(reader.GetOrdinal("PilihanC")) ? "" : reader.GetString(reader.GetOrdinal("PilihanC")),
+                                reader.IsDBNull(reader.GetOrdinal("PilihanD")) ? "" : reader.GetString(reader.GetOrdinal("PilihanD"))
+                                    },
+                                    JawabanBenarIndex = jawabanBenarIndex,
+                                    JawabanUserIndex = null
+                                });
+                            }
+                        }
+                    }
                 }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Terjadi masalah database saat memuat soal kuis: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+                daftarSoal.Clear(); // Pastikan daftar soal kosong jika gagal dimuat
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat memuat soal kuis: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+                daftarSoal.Clear();
             }
         }
 
@@ -267,27 +322,103 @@ namespace ITCourseCertificateV001
                 return;
             }
 
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(currentConnString))
+                {
+                    conn.Open();
+                    using (SqlTransaction trans = conn.BeginTransaction())
+                    {
+                        foreach (var soal in daftarSoal)
+                        {
+                            // Hanya simpan jawaban jika pengguna benar-benar menjawab soal tersebut
+                            if (soal.JawabanUserIndex.HasValue)
+                            {
+                                using (SqlCommand cmd = new SqlCommand("InsertJawabanUser", conn, trans))
+                                {
+                                    cmd.CommandType = CommandType.StoredProcedure;
+                                    cmd.Parameters.AddWithValue("@UserID", this.UserID);
+                                    cmd.Parameters.AddWithValue("@KuisID", soal.KuisID); // Ambil KuisID dari objek soal
+
+                                    // Konversi JawabanUserIndex (int) ke CHAR(1) 'A', 'B', 'C', 'D'
+                                    char jawabanChar;
+                                    switch (soal.JawabanUserIndex.Value)
+                                    {
+                                        case 0: jawabanChar = 'A'; break;
+                                        case 1: jawabanChar = 'B'; break;
+                                        case 2: jawabanChar = 'C'; break;
+                                        case 3: jawabanChar = 'D'; break;
+                                        default: jawabanChar = 'X'; break; // Placeholder jika ada index di luar A-D
+                                    }
+
+                                    cmd.Parameters.AddWithValue("@Jawaban", jawabanChar.ToString()); // Convert char to string for parameter
+                                    cmd.Parameters.AddWithValue("@IsCorrect", soal.JawabanUserIndex.Value == soal.JawabanBenarIndex);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        trans.Commit();
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Gagal menyimpan jawaban kuis ke database: " + ex.Message, "Kesalahan Database Penyimpanan Jawaban", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+                // Jika penyimpanan jawaban gagal, ini bisa menjadi masalah serius,
+                // pertimbangkan apakah Anda tetap ingin menyimpan sertifikat atau menghentikan alur
+                return; // Menghentikan alur jika penyimpanan jawaban gagal
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat menyimpan jawaban kuis: " + ex.Message, "Kesalahan Umum Penyimpanan Jawaban", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Log 'ex' di sini
+                return; // Menghentikan alur jika penyimpanan jawaban gagal
+            }
+
             // Generate CertificateID hanya jika lulus
             string certificateID = null;
             if (nilaiAkhir >= 80)
             {
-                certificateID = GenerateCertificateID(); // pastikan metode ini tersedia di kelas
+                certificateID = GenerateCertificateID();
 
-                // ⬇️ Tambahkan kode ini
-                using (SqlConnection conn = new SqlConnection(connString))
+                try
                 {
-                    string query = @"INSERT INTO Certificate0 (UserID, KursusID, Nilai, TanggalDapat, IsPrinted) 
-                         VALUES (@UserID, @KursusID, @Nilai, @TanggalDapat, @IsPrinted)";
+                    using (SqlConnection conn = new SqlConnection(currentConnString))
+                    {
+                        conn.Open();
+                        using (SqlCommand cmd = new SqlCommand("InsertCertificate", conn)) // Panggil SP baru
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure; // Penting
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@UserID", this.UserID);
-                    cmd.Parameters.AddWithValue("@KursusID", kursusId);
-                    cmd.Parameters.AddWithValue("@Nilai", nilaiAkhir);
-                    cmd.Parameters.AddWithValue("@TanggalDapat", DateTime.Now);
-                    cmd.Parameters.AddWithValue("@IsPrinted", 0);
-
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
+                            cmd.Parameters.AddWithValue("@UserID", this.UserID);
+                            cmd.Parameters.AddWithValue("@KursusID", kursusId);
+                            cmd.Parameters.AddWithValue("@Nilai", nilaiAkhir);
+                            cmd.Parameters.AddWithValue("@TanggalDapat", DateTime.Now);
+                            cmd.Parameters.AddWithValue("@IsPrinted", 0); // Default ke 0 (false)
+                            cmd.Parameters.AddWithValue("@CertificateIDuniq", certificateID); // Parameter untuk ID unik
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show("Gagal menyimpan data sertifikat ke database: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Log 'ex' di sini
+                    certificateID = null; // Set null lagi agar tidak ada ilusi sertifikat tersimpan
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Terjadi kesalahan tak terduga saat menyimpan sertifikat: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Log 'ex' di sini
+                    certificateID = null;
                 }
             }
 
@@ -298,13 +429,54 @@ namespace ITCourseCertificateV001
                 KursusID = kursusId,
                 KursusJudul = comboBox1.Text,
                 NilaiAkhir = nilaiAkhir,
-                CertificateIDuniq = certificateID
+                CertificateIDuniq = certificateID,
+                NamaLengkapUser = GetUserNameForHasilKuis(this.UserID)
             };
 
             hasilForm.WindowState = FormWindowState.Maximized;
             hasilForm.Show();
 
             this.Close(); // Tutup form kuis saat selesai
+        }
+
+        private string GetUserNameForHasilKuis(int userId)
+        {
+            string result = "Pengguna Tidak Dikenal";
+            string currentConnString = Koneksi.GetConnectionString();
+
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return result;
+            }
+            if (userId <= 0) return result;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(currentConnString))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("GetFullNameByUserId", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+                        object dbResult = cmd.ExecuteScalar();
+                        if (dbResult != null && dbResult != DBNull.Value)
+                        {
+                            result = dbResult.ToString();
+                        }
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Gagal mengambil nama pengguna untuk hasil kuis: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna untuk hasil kuis: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return result;
         }
 
         private void SetKontrolAwal()
@@ -342,16 +514,16 @@ namespace ITCourseCertificateV001
 
         private string GenerateCertificateID()
         {
-            return "CERT-" + DateTime.Now.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+            return "CERT - " + DateTime.Now.ToString("yyyyMMddHHmmss") + " - " + Guid.NewGuid().ToString().Substring(0, 4);
         }
 
         private class Soal
         {
+            public int KuisID { get; set; }
             public string Pertanyaan { get; set; }
             public string[] Pilihan { get; set; }
             public int JawabanBenarIndex { get; set; }
             public int? JawabanUserIndex { get; set; }
-            public int? ReplaceKursusID { get; set; } = null;
         }
 
         private void radioButtonA_CheckedChanged(object sender, EventArgs e) { }

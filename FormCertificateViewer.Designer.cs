@@ -32,7 +32,9 @@
             this.ClientSize = new System.Drawing.Size(952, 710);
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.reportViewer1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormCertificateViewer";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FormCertificateViewer_Load);
             this.ResumeLayout(false);
 

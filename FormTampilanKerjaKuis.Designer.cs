@@ -79,7 +79,7 @@
             this.radioButtonD.Name = "radioButtonD";
             this.radioButtonD.Size = new System.Drawing.Size(888, 24);
             this.radioButtonD.TabIndex = 0;
-            this.radioButtonD.Text = "radioButtonD";
+            this.radioButtonD.Text = "Opsi pilihan D akan muncul di sini";
             this.radioButtonD.CheckedChanged += new System.EventHandler(this.radioButtonD_CheckedChanged);
             // 
             // radioButtonC
@@ -89,7 +89,7 @@
             this.radioButtonC.Name = "radioButtonC";
             this.radioButtonC.Size = new System.Drawing.Size(888, 24);
             this.radioButtonC.TabIndex = 1;
-            this.radioButtonC.Text = "radioButtonC";
+            this.radioButtonC.Text = "Opsi pilihan C akan muncul di sini";
             this.radioButtonC.CheckedChanged += new System.EventHandler(this.radioButtonC_CheckedChanged);
             // 
             // radioButtonB
@@ -99,7 +99,7 @@
             this.radioButtonB.Name = "radioButtonB";
             this.radioButtonB.Size = new System.Drawing.Size(888, 24);
             this.radioButtonB.TabIndex = 2;
-            this.radioButtonB.Text = "radioButtonB";
+            this.radioButtonB.Text = "Opsi pilihan B akan muncul di sini";
             this.radioButtonB.CheckedChanged += new System.EventHandler(this.radioButtonB_CheckedChanged);
             // 
             // radioButtonA
@@ -109,7 +109,7 @@
             this.radioButtonA.Name = "radioButtonA";
             this.radioButtonA.Size = new System.Drawing.Size(888, 24);
             this.radioButtonA.TabIndex = 3;
-            this.radioButtonA.Text = "radioButtonA";
+            this.radioButtonA.Text = "Opsi pilihan A akan muncul di sini";
             this.radioButtonA.CheckedChanged += new System.EventHandler(this.radioButtonA_CheckedChanged);
             // 
             // btnMulai
@@ -186,6 +186,7 @@
             this.ClientSize = new System.Drawing.Size(900, 600);
             this.Controls.Add(this.tableLayoutPanelMain);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "FormTampilanKerjaKuis";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Kerjakan Kuis";

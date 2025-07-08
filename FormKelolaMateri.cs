@@ -9,14 +9,16 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace ITCourseCertificateV001
 {
     public partial class FormKelolaMateri : Form
     {
+        //Koneksi kn = new Koneksi(); // Koneksi ke database menggunakan class Koneksi
+        //string strKonek = ""; // string koneksi ke database
         //private string connStr = "Data Source=LAPTOPGW1;Initial Catalog=CertificateCourseDB;Integrated Security=True";
-        string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+        //string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
         private BindingSource bsKursus = new BindingSource();
         private int currentUserID;
         private Form previousForm;
@@ -24,6 +26,7 @@ namespace ITCourseCertificateV001
         public FormKelolaMateri(int userID, FormDashboard dashboardForm)
         {
             InitializeComponent();
+            //strKonek = kn.connectionString();
             currentUserID = userID;
             previousForm = dashboardForm;
         }
@@ -39,9 +42,17 @@ namespace ITCourseCertificateV001
 
         private void LoadKursus()
         {
+
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("SELECT KursusID, JudulKursus FROM DataKursus", conn))
@@ -63,12 +74,10 @@ namespace ITCourseCertificateV001
             catch (SqlException ex)
             {
                 MessageBox.Show("Terjadi masalah database saat memuat daftar kursus: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan tak terduga saat memuat daftar kursus: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
             }
         }
 
@@ -108,9 +117,16 @@ namespace ITCourseCertificateV001
         {
             if (cmbKursus.SelectedValue == null) return;
 
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
                     using (SqlCommand cmd = new SqlCommand("EXEC GetMateriByKursusID @kursusID", conn))
@@ -134,12 +150,10 @@ namespace ITCourseCertificateV001
             catch (SqlException ex)
             {
                 MessageBox.Show("Terjadi masalah database saat memuat materi: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan tak terduga saat memuat materi: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
             }
         }
 
@@ -172,17 +186,19 @@ namespace ITCourseCertificateV001
                 return;
             }
 
-            // Perbaiki validasi link YouTube
-            if (!txtLink.Text.StartsWith("http://") && !txtLink.Text.StartsWith("https://"))
+            // Validasi link harus diawali dengan http:// atau https://
+            if (!txtLink.Text.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !txtLink.Text.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
                 MessageBox.Show("Link video harus diawali dengan http:// atau https://.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            // Jika Anda ingin membatasi hanya ke YouTube, Anda perlu regex yang lebih kuat.
-            // Contoh sederhana:
-            if (!txtLink.Text.Contains("youtube.com/") && !txtLink.Text.Contains("youtu.be/"))
+
+            // Validasi apakah link adalah link YouTube yang valid
+            // Pola regex ini mencocokkan berbagai format URL YouTube (youtube.com, youtu.be)
+            string youtubeUrlPattern = @"^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$";
+            if (!Regex.IsMatch(txtLink.Text, youtubeUrlPattern, RegexOptions.IgnoreCase))
             {
-                MessageBox.Show("Link video harus dari YouTube.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Link video yang dimasukkan bukan link YouTube yang valid.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -200,10 +216,16 @@ namespace ITCourseCertificateV001
                 return;
             }
 
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
                     using (SqlTransaction trans = conn.BeginTransaction())
@@ -225,12 +247,10 @@ namespace ITCourseCertificateV001
             catch (SqlException ex)
             {
                 MessageBox.Show("Terjadi masalah database saat menyimpan materi: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini. Rollback sudah ditangani oleh SP jika Anda sudah tambahkan TRY-CATCH di SP.
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan tak terduga saat menyimpan materi: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Log 'ex' di sini
             }
 
             LoadMateri();
@@ -262,9 +282,18 @@ namespace ITCourseCertificateV001
                 return;
             }
 
-            if (!txtLink.Text.Contains("youtube.com") && !txtLink.Text.Contains("youtu.be"))
+            // Validasi link harus diawali dengan http:// atau https://
+            if (!txtLink.Text.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !txtLink.Text.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
             {
-                MessageBox.Show("Link video harus dari YouTube.");
+                MessageBox.Show("Link video harus diawali dengan http:// atau https://.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Validasi apakah link adalah link YouTube yang valid
+            string youtubeUrlPattern = @"^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$";
+            if (!Regex.IsMatch(txtLink.Text, youtubeUrlPattern, RegexOptions.IgnoreCase))
+            {
+                MessageBox.Show("Link video yang dimasukkan bukan link YouTube yang valid.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -276,27 +305,47 @@ namespace ITCourseCertificateV001
 
             int id = Convert.ToInt32(dgvMateri.CurrentRow.Cells["MateriID"].Value);
 
-            using (SqlConnection conn = new SqlConnection(connString))
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
             {
-                conn.Open();
-                SqlTransaction trans = conn.BeginTransaction();
-                try
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
-                    SqlCommand cmd = new SqlCommand("EXEC UpdateMateri @MateriID, @KursusID, @JudulMateri, @LinkVideo, @Urutan, @DurasiMenit", conn, trans);
-                    cmd.Parameters.AddWithValue("@MateriID", id);
-                    cmd.Parameters.AddWithValue("@KursusID", Convert.ToInt32(cmbKursus.SelectedValue));
-                    cmd.Parameters.AddWithValue("@JudulMateri", txtJudul.Text.Trim());
-                    cmd.Parameters.AddWithValue("@LinkVideo", txtLink.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Urutan", urutan);
-                    cmd.Parameters.AddWithValue("@DurasiMenit", durasi);
-                    cmd.ExecuteNonQuery();
-                    trans.Commit();
+                    conn.Open();
+                    SqlTransaction trans = conn.BeginTransaction();
+                    try
+                    {
+                        SqlCommand cmd = new SqlCommand("EXEC UpdateMateri @MateriID, @KursusID, @JudulMateri, @LinkVideo, @Urutan, @DurasiMenit", conn, trans);
+                        cmd.Parameters.AddWithValue("@MateriID", id);
+                        cmd.Parameters.AddWithValue("@KursusID", Convert.ToInt32(cmbKursus.SelectedValue));
+                        cmd.Parameters.AddWithValue("@JudulMateri", txtJudul.Text.Trim());
+                        cmd.Parameters.AddWithValue("@LinkVideo", txtLink.Text.Trim());
+                        cmd.Parameters.AddWithValue("@Urutan", urutan);
+                        cmd.Parameters.AddWithValue("@DurasiMenit", durasi);
+                        cmd.ExecuteNonQuery();
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        MessageBox.Show("Terjadi kesalahan: " + ex.Message);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    MessageBox.Show("Terjadi kesalahan: " + ex.Message);
-                }
+
+            }
+
+            catch (SqlException ex)
+            {
+                MessageBox.Show("Terjadi masalah database saat memperbarui materi: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan tak terduga saat memperbarui materi: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             LoadMateri();
@@ -316,9 +365,16 @@ namespace ITCourseCertificateV001
             {
                 int id = Convert.ToInt32(dgvMateri.CurrentRow.Cells["MateriID"].Value);
 
+                string currentConnString = Koneksi.GetConnectionString();
+                if (string.IsNullOrEmpty(currentConnString))
+                {
+                    MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 try
                 {
-                    using (SqlConnection conn = new SqlConnection(connString))
+                    using (SqlConnection conn = new SqlConnection(currentConnString))
                     {
                         conn.Open();
                         using (SqlTransaction trans = conn.BeginTransaction())
@@ -336,12 +392,10 @@ namespace ITCourseCertificateV001
                 catch (SqlException ex)
                 {
                     MessageBox.Show("Terjadi masalah database saat menghapus data: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // Log 'ex' di sini. Rollback sudah ditangani oleh SP.
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Terjadi kesalahan tak terduga saat menghapus data: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // Log 'ex' di sini
                 }
 
                 LoadMateri();
@@ -367,6 +421,14 @@ namespace ITCourseCertificateV001
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+
+                string currentConnString = Koneksi.GetConnectionString();
+                if (string.IsNullOrEmpty(currentConnString))
+                {
+                    MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 try
                 {
                     // Pastikan Anda memiliki paket NuGet EPPlus terinstal dengan benar.
@@ -392,7 +454,7 @@ namespace ITCourseCertificateV001
                         int importedCount = 0;
                         int failedCount = 0;
 
-                        using (SqlConnection conn = new SqlConnection(connString))
+                        using (SqlConnection conn = new SqlConnection(currentConnString))
                         {
                             conn.Open();
                             using (SqlTransaction trans = conn.BeginTransaction())
@@ -429,17 +491,19 @@ namespace ITCourseCertificateV001
                                             continue;
                                         }
 
-                                        // Validasi link video (opsional, sesuaikan dengan kebutuhan Anda)
-                                        if (!link.StartsWith("http://") && !link.StartsWith("https://"))
+                                        // Validasi link harus diawali dengan http:// atau https://
+                                        if (!link.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !link.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                                         {
                                             MessageBox.Show($"Link video di baris {i} tidak valid (harus diawali http:// atau https://). Melewati baris ini.", "Peringatan Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             failedCount++;
                                             continue;
                                         }
-                                        // Jika Anda ingin membatasi hanya ke youtube.com
-                                        if (!link.Contains("youtube.com")) // Perbaikan ini lebih umum daripada angka spesifik
+
+                                        // Validasi apakah link adalah link YouTube yang valid
+                                        string youtubeUrlPattern = @"^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$";
+                                        if (!Regex.IsMatch(link, youtubeUrlPattern, RegexOptions.IgnoreCase))
                                         {
-                                            MessageBox.Show($"Link video di baris {i} bukan dari YouTube. Melewati baris ini.", "Peringatan Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            MessageBox.Show($"Link video di baris {i} bukan link YouTube yang valid. Melewati baris ini.", "Peringatan Import", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             failedCount++;
                                             continue;
                                         }

@@ -16,12 +16,15 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>1.2in</Top>
+        <Top>1.80795in</Top>
+        <Left>6.65366cm</Left>
         <Height>0.3in</Height>
-        <Width>6.5in</Width>
+        <Width>3.5552in</Width>
         <Style>
           <TextAlign>Center</TextAlign>
         </Style>
@@ -40,12 +43,15 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>1.7in</Top>
+        <Top>2.89989in</Top>
+        <Left>6.65366cm</Left>
         <Height>0.3in</Height>
-        <Width>6.5in</Width>
+        <Width>3.5552in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <TextAlign>Center</TextAlign>
@@ -64,12 +70,15 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>2.3in</Top>
-        <Height>0.3in</Height>
-        <Width>3.25in</Width>
+        <Top>4.62957in</Top>
+        <Left>3.08078cm</Left>
+        <Height>0.25in</Height>
+        <Width>1.29852in</Width>
         <ZIndex>2</ZIndex>
         <Style>
           <TextAlign>Center</TextAlign>
@@ -88,13 +97,15 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>2.3in</Top>
-        <Left>3.25in</Left>
-        <Height>0.3in</Height>
-        <Width>3.25in</Width>
+        <Top>3.47503in</Top>
+        <Left>4.89662in</Left>
+        <Height>0.25in</Height>
+        <Width>0.93812in</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <TextAlign>Center</TextAlign>
@@ -107,7 +118,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Certified Course IT</Value>
+                <Value>Best Regards, Certified Course IT</Value>
                 <Style>
                   <FontSize>11pt</FontSize>
                 </Style>
@@ -116,8 +127,8 @@
             <Style />
           </Paragraph>
         </Paragraphs>
-        <Top>3in</Top>
-        <Left>4in</Left>
+        <Top>4.65956in</Top>
+        <Left>6.32358in</Left>
         <Height>0.3in</Height>
         <Width>2.5in</Width>
         <ZIndex>4</ZIndex>
@@ -125,40 +136,177 @@
           <TextAlign>Center</TextAlign>
         </Style>
       </Textbox>
-      <Textbox Name="Title">
+      <Rectangle Name="Rectangle1">
+        <ReportItems>
+          <Textbox Name="Title">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Certificate of completion</Value>
+                    <Style>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>20pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>White</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.38713in</Top>
+            <Left>7.56999cm</Left>
+            <Height>0.4in</Height>
+            <Width>3.02778in</Width>
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <KeepTogether>true</KeepTogether>
+        <Height>1.24824in</Height>
+        <Width>8.82358in</Width>
+        <ZIndex>5</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <BackgroundColor>MidnightBlue</BackgroundColor>
+        </Style>
+      </Rectangle>
+      <Textbox Name="Textbox3">
         <CanGrow>true</CanGrow>
         <KeepTogether>true</KeepTogether>
         <Paragraphs>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Completion Certified Course IT</Value>
-                <Style>
-                  <FontSize>20pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                  <Color>DarkBlue</Color>
-                </Style>
+                <Value>PROUDLY PRESENTED TO</Value>
+                <Style />
               </TextRun>
             </TextRuns>
             <Style />
           </Paragraph>
         </Paragraphs>
-        <Top>0.5in</Top>
-        <Height>0.4in</Height>
-        <Width>6.5in</Width>
-        <ZIndex>5</ZIndex>
+        <rd:DefaultName>Textbox3</rd:DefaultName>
+        <Top>1.31769in</Top>
+        <Left>3.50141in</Left>
+        <Height>0.25in</Height>
+        <Width>1.87025in</Width>
+        <ZIndex>6</ZIndex>
         <Style>
-          <TextAlign>Center</TextAlign>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox4">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Have passed completed the course</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox4</rd:DefaultName>
+        <Top>2.44075in</Top>
+        <Left>3.37641in</Left>
+        <Height>0.25in</Height>
+        <Width>2.27461in</Width>
+        <ZIndex>7</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox5">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>With a final score :</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox5</rd:DefaultName>
+        <Top>3.47503in</Top>
+        <Left>3.37641in</Left>
+        <Height>0.25in</Height>
+        <Width>1.49226in</Width>
+        <ZIndex>8</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox6">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Awarded on :</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox6</rd:DefaultName>
+        <Top>4.62957in</Top>
+        <Left>0.14346in</Left>
+        <Height>0.25in</Height>
+        <Width>1in</Width>
+        <ZIndex>9</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>4in</Height>
-    <Style />
+    <Height>5.10021in</Height>
+    <Style>
+      <BackgroundColor>White</BackgroundColor>
+    </Style>
   </Body>
-  <Width>7in</Width>
+  <Width>8.82358in</Width>
   <Page>
-    <LeftMargin>1in</LeftMargin>
-    <RightMargin>1in</RightMargin>
+    <LeftMargin>15in</LeftMargin>
+    <RightMargin>15in</RightMargin>
     <TopMargin>1in</TopMargin>
     <BottomMargin>1in</BottomMargin>
     <Style />

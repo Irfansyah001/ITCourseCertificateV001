@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Configuration;
 
 namespace ITCourseCertificateV001
 {
     public partial class FormDashboard : Form
     {
+        //Koneksi kn = new Koneksi();
+        //string strKonek = "";
+        //private string strKonek;
         public string FullName { get; set; }
         public int UserID { get; set; }
 
         public FormDashboard()
         {
             InitializeComponent();
-
-            // Pastikan form dalam mode fullscreen dan tidak bisa di-minimize
+            // strKonek = kn.connectionString();
+            // strKonek = Koneksi.GetConnectionString();
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = true;
@@ -42,25 +45,36 @@ namespace ITCourseCertificateV001
             FormDashboard_Resize(sender, e);
         }
 
-        // Tambahkan fungsi helper ini di dalam kelas FormDashboard
-        // Fungsi ini akan mengambil nama pengguna dari database
         private string GetUserName(int userId)
         {
-            string result = "Pengguna"; // Nilai default jika nama tidak ditemukan atau error
-            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+            string result = "Pengguna Tidak Dikenal"; // Nilai default yang lebih deskriptif
+
+            // Tambahkan validasi eksplisit untuk userId sebelum mencoba koneksi DB
+            if (userId <= 0)
+            {
+                return result; // Langsung kembalikan default jika UserID tidak valid
+            }
+
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return result; // Kembalikan default jika string koneksi tidak valid
+            }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
-                    string query = "SELECT FullName FROM Users WHERE UserID = @id";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand("GetFullNameByUserId", conn))
                     {
-                        cmd.Parameters.AddWithValue("@id", userId);
-                        object dbResult = cmd.ExecuteScalar(); // Gunakan ExecuteScalar karena hanya mengambil satu nilai
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@UserID", userId); // Pastikan parameter ini sesuai dengan nama parameter di SP Anda (@UserID, bukan @id)
 
-                        if (dbResult != null)
+                        object dbResult = cmd.ExecuteScalar();
+
+                        if (dbResult != null && dbResult != DBNull.Value)
                         {
                             result = dbResult.ToString();
                         }
@@ -70,12 +84,12 @@ namespace ITCourseCertificateV001
             catch (SqlException ex)
             {
                 MessageBox.Show("Gagal mengambil nama pengguna dari database: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Pertimbangkan untuk melakukan logging error di sini
+                // Log 'ex' di sini
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Terjadi kesalahan tak terduga saat mengambil nama pengguna: " + ex.Message, "Kesalahan Umum", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Pertimbangkan untuk melakukan logging error di sini
+                // Log 'ex' di sini
             }
             return result;
         }
@@ -140,16 +154,22 @@ namespace ITCourseCertificateV001
         {
             int certId = 0;
             // Ambil connection string dari App.config
-            string connString = ITCourseCertificateV001.Properties.Settings.Default.CertificateCourseDBConnectionString;
+
+            string currentConnString = Koneksi.GetConnectionString();
+            if (string.IsNullOrEmpty(currentConnString))
+            {
+                MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return 0; // Kembalikan default jika string koneksi tidak valid
+            }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(connString))
+                using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
-                    string query = "SELECT TOP 1 CertificateID FROM Certificate0 WHERE UserID = @UserID ORDER BY TanggalDapat DESC";
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand("GetLatestCertificateIdForUser", conn)) // Panggil SP baru
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@UserID", userId);
 
                         var result = cmd.ExecuteScalar();

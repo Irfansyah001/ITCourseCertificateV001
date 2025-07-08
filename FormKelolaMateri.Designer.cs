@@ -262,7 +262,7 @@ namespace ITCourseCertificateV001
             // 
             this.ClientSize = new System.Drawing.Size(1924, 1055);
             this.Controls.Add(this.panelMain);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormKelolaMateri";

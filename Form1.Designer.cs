@@ -15,14 +15,16 @@
         private void InitializeComponent()
         {
             this.mainLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.btnPengaturanIP = new System.Windows.Forms.Button();
             this.panelContainer = new System.Windows.Forms.Panel();
-            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnLogin = new System.Windows.Forms.Button();
+            this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
             this.mainLayout.SuspendLayout();
             this.panelContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -31,66 +33,80 @@
             // mainLayout
             // 
             this.mainLayout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(30)))));
-            this.mainLayout.ColumnCount = 1;
+            this.mainLayout.ColumnCount = 2;
             this.mainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.mainLayout.Controls.Add(this.panelContainer, 0, 0);
+            this.mainLayout.Controls.Add(this.btnPengaturanIP, 1, 0);
             this.mainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainLayout.Location = new System.Drawing.Point(0, 0);
-            this.mainLayout.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.mainLayout.Name = "mainLayout";
             this.mainLayout.RowCount = 1;
             this.mainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.mainLayout.Size = new System.Drawing.Size(1152, 750);
+            this.mainLayout.Size = new System.Drawing.Size(1024, 600);
             this.mainLayout.TabIndex = 0;
+            // 
+            // btnPengaturanIP
+            // 
+            this.btnPengaturanIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPengaturanIP.Location = new System.Drawing.Point(931, 3);
+            this.btnPengaturanIP.Name = "btnPengaturanIP";
+            this.btnPengaturanIP.Size = new System.Drawing.Size(90, 30);
+            this.btnPengaturanIP.TabIndex = 0;
+            this.btnPengaturanIP.Text = "Settings IP";
+            this.btnPengaturanIP.UseVisualStyleBackColor = true;
+            this.btnPengaturanIP.Click += new System.EventHandler(this.btnPengaturanIP_Click);
             // 
             // panelContainer
             // 
             this.panelContainer.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(40)))), ((int)(((byte)(80)))), ((int)(((byte)(60)))));
             this.panelContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelContainer.Controls.Add(this.pictureBoxLogo);
             this.panelContainer.Controls.Add(this.lblTitle);
+            this.panelContainer.Controls.Add(this.label1);
             this.panelContainer.Controls.Add(this.lblUsername);
             this.panelContainer.Controls.Add(this.txtUsername);
             this.panelContainer.Controls.Add(this.lblPassword);
             this.panelContainer.Controls.Add(this.txtPassword);
             this.panelContainer.Controls.Add(this.btnLogin);
-            this.panelContainer.Location = new System.Drawing.Point(317, 113);
-            this.panelContainer.Margin = new System.Windows.Forms.Padding(11, 12, 11, 12);
+            this.panelContainer.Controls.Add(this.pictureBoxLogo);
+            this.panelContainer.Location = new System.Drawing.Point(17, 90);
+            this.panelContainer.Margin = new System.Windows.Forms.Padding(10);
             this.panelContainer.Name = "panelContainer";
-            this.panelContainer.Padding = new System.Windows.Forms.Padding(22, 25, 22, 25);
-            this.panelContainer.Size = new System.Drawing.Size(517, 524);
+            this.panelContainer.Padding = new System.Windows.Forms.Padding(20);
+            this.panelContainer.Size = new System.Drawing.Size(890, 420);
             this.panelContainer.TabIndex = 0;
-            // 
-            // pictureBoxLogo
-            // 
-            this.pictureBoxLogo.Image = global::ITCourseCertificateV001.Properties.Resources.logo_certificate;
-            this.pictureBoxLogo.Location = new System.Drawing.Point(197, 31);
-            this.pictureBoxLogo.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.pictureBoxLogo.Name = "pictureBoxLogo";
-            this.pictureBoxLogo.Size = new System.Drawing.Size(112, 94);
-            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBoxLogo.TabIndex = 0;
-            this.pictureBoxLogo.TabStop = false;
             // 
             // lblTitle
             // 
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Location = new System.Drawing.Point(34, 125);
+            this.lblTitle.BackColor = System.Drawing.Color.Transparent;
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.Color.DarkViolet;
+            this.lblTitle.Location = new System.Drawing.Point(264, 95);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(450, 50);
+            this.lblTitle.Size = new System.Drawing.Size(350, 40);
             this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "Selamat Testing - Login";
+            this.lblTitle.Text = "/IT-Certificate/";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.ForeColor = System.Drawing.Color.White;
+            this.label1.Location = new System.Drawing.Point(266, 151);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(350, 40);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Silahkan Login";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblUsername
             // 
             this.lblUsername.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblUsername.ForeColor = System.Drawing.Color.White;
-            this.lblUsername.Location = new System.Drawing.Point(56, 200);
+            this.lblUsername.Location = new System.Drawing.Point(266, 191);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(112, 31);
+            this.lblUsername.Size = new System.Drawing.Size(100, 25);
             this.lblUsername.TabIndex = 2;
             this.lblUsername.Text = "Username";
             // 
@@ -98,19 +114,18 @@
             // 
             this.txtUsername.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtUsername.Location = new System.Drawing.Point(56, 231);
-            this.txtUsername.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtUsername.Location = new System.Drawing.Point(266, 216);
             this.txtUsername.Name = "txtUsername";
-            this.txtUsername.Size = new System.Drawing.Size(393, 34);
+            this.txtUsername.Size = new System.Drawing.Size(350, 30);
             this.txtUsername.TabIndex = 3;
             // 
             // lblPassword
             // 
             this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.lblPassword.ForeColor = System.Drawing.Color.White;
-            this.lblPassword.Location = new System.Drawing.Point(56, 281);
+            this.lblPassword.Location = new System.Drawing.Point(266, 256);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(112, 31);
+            this.lblPassword.Size = new System.Drawing.Size(100, 25);
             this.lblPassword.TabIndex = 4;
             this.lblPassword.Text = "Password";
             // 
@@ -118,10 +133,9 @@
             // 
             this.txtPassword.BackColor = System.Drawing.Color.WhiteSmoke;
             this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtPassword.Location = new System.Drawing.Point(56, 312);
-            this.txtPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPassword.Location = new System.Drawing.Point(266, 281);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(393, 34);
+            this.txtPassword.Size = new System.Drawing.Size(350, 30);
             this.txtPassword.TabIndex = 5;
             this.txtPassword.UseSystemPasswordChar = true;
             // 
@@ -132,23 +146,31 @@
             this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnLogin.ForeColor = System.Drawing.Color.White;
-            this.btnLogin.Location = new System.Drawing.Point(197, 388);
-            this.btnLogin.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.btnLogin.Location = new System.Drawing.Point(378, 347);
             this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(124, 44);
+            this.btnLogin.Size = new System.Drawing.Size(123, 48);
             this.btnLogin.TabIndex = 6;
-            this.btnLogin.Text = "Login";
+            this.btnLogin.Text = "Mulai";
             this.btnLogin.UseVisualStyleBackColor = false;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
+            // pictureBoxLogo
+            // 
+            this.pictureBoxLogo.Image = global::ITCourseCertificateV001.Properties.Resources.logo_certificate;
+            this.pictureBoxLogo.Location = new System.Drawing.Point(394, -1);
+            this.pictureBoxLogo.Name = "pictureBoxLogo";
+            this.pictureBoxLogo.Size = new System.Drawing.Size(98, 93);
+            this.pictureBoxLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxLogo.TabIndex = 0;
+            this.pictureBoxLogo.TabStop = false;
+            // 
             // FormLogin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1152, 750);
+            this.ClientSize = new System.Drawing.Size(1024, 600);
             this.Controls.Add(this.mainLayout);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimizeBox = false;
             this.Name = "FormLogin";
             this.Text = "Login Certificate Course";
@@ -172,5 +194,7 @@
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnPengaturanIP;
     }
 }
