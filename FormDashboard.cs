@@ -21,8 +21,10 @@ namespace ITCourseCertificateV001
             // strKonek = Koneksi.GetConnectionString();
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
-            this.MaximizeBox = true;
+            this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.ControlBox = false;
+            this.FormBorderStyle = FormBorderStyle.None;
         }
 
         private void FormDashboard_Load(object sender, EventArgs e)
@@ -159,7 +161,7 @@ namespace ITCourseCertificateV001
             if (string.IsNullOrEmpty(currentConnString))
             {
                 MessageBox.Show("String koneksi database tidak valid. Mohon periksa pengaturan IP.", "Kesalahan Koneksi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 0; // Kembalikan default jika string koneksi tidak valid
+                return 0;
             }
 
             try
@@ -167,7 +169,7 @@ namespace ITCourseCertificateV001
                 using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("GetLatestCertificateIdForUser", conn)) // Panggil SP baru
+                    using (SqlCommand cmd = new SqlCommand("GetLatestCertificateIdForUser", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@UserID", userId);
@@ -183,7 +185,6 @@ namespace ITCourseCertificateV001
             }
             catch (SqlException ex)
             {
-                // Tangani error database, misalnya koneksi gagal atau query bermasalah
                 MessageBox.Show("Terjadi masalah koneksi database saat mengambil sertifikat: " + ex.Message, "Kesalahan Database", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // Anda bisa log ex di sini
             }
@@ -221,5 +222,21 @@ namespace ITCourseCertificateV001
                 panelMenu.Height - btnLogout.Height - 30
             );
         }
+
+        private void btnQuit_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Apakah Anda yakin ingin keluar dari aplikasi?",
+                "Konfirmasi Keluar",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
     }
+
 }

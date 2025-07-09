@@ -68,25 +68,29 @@
             // btnKembali
             // 
             this.btnKembali.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnKembali.BackColor = System.Drawing.Color.ForestGreen;
             this.btnKembali.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnKembali.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.btnKembali.Location = new System.Drawing.Point(325, 177);
             this.btnKembali.Name = "btnKembali";
             this.btnKembali.Size = new System.Drawing.Size(150, 35);
             this.btnKembali.TabIndex = 4;
             this.btnKembali.Text = "Back to Menu";
-            this.btnKembali.UseVisualStyleBackColor = true;
+            this.btnKembali.UseVisualStyleBackColor = false;
             this.btnKembali.Click += new System.EventHandler(this.btnKembali_Click);
             // 
             // btnLihatSertifikat
             // 
             this.btnLihatSertifikat.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnLihatSertifikat.BackColor = System.Drawing.Color.DarkViolet;
             this.btnLihatSertifikat.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLihatSertifikat.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.btnLihatSertifikat.Location = new System.Drawing.Point(305, 292);
             this.btnLihatSertifikat.Name = "btnLihatSertifikat";
             this.btnLihatSertifikat.Size = new System.Drawing.Size(190, 35);
             this.btnLihatSertifikat.TabIndex = 5;
             this.btnLihatSertifikat.Text = "Lihat Sertifikat";
-            this.btnLihatSertifikat.UseVisualStyleBackColor = true;
+            this.btnLihatSertifikat.UseVisualStyleBackColor = false;
             this.btnLihatSertifikat.Visible = false;
             this.btnLihatSertifikat.Click += new System.EventHandler(this.btnLihatSertifikat_Click);
             // 

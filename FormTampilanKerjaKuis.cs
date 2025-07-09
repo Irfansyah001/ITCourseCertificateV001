@@ -21,6 +21,7 @@ namespace ITCourseCertificateV001
         private bool sudahTampilkanWaktuHabis = false;
 
         public int UserID { get; set; } // ID user dari Form Login atau MainMenu
+        public int PreviousCertificateID { get; set; }
 
         public FormTampilanKerjaKuis()
         {
@@ -385,6 +386,7 @@ namespace ITCourseCertificateV001
 
             // Generate CertificateID hanya jika lulus
             string certificateID = null;
+            int actualCertificateID = 0;
             if (nilaiAkhir >= 80)
             {
                 certificateID = GenerateCertificateID();
@@ -394,17 +396,47 @@ namespace ITCourseCertificateV001
                     using (SqlConnection conn = new SqlConnection(currentConnString))
                     {
                         conn.Open();
-                        using (SqlCommand cmd = new SqlCommand("InsertCertificate", conn)) // Panggil SP baru
+                        using (SqlCommand cmd = new SqlCommand("SaveCertificate", conn))
                         {
-                            cmd.CommandType = CommandType.StoredProcedure; // Penting
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            // Teruskan PreviousCertificateID jika ini adalah operasi UPDATE
+                            if (this.PreviousCertificateID > 0)
+                            {
+                                cmd.Parameters.AddWithValue("@CertificateID", this.PreviousCertificateID);
+                            }
+                            else
+                            {
+                                cmd.Parameters.AddWithValue("@CertificateID", DBNull.Value); // Untuk INSERT baru, set NULL
+                            }
 
                             cmd.Parameters.AddWithValue("@UserID", this.UserID);
                             cmd.Parameters.AddWithValue("@KursusID", kursusId);
                             cmd.Parameters.AddWithValue("@Nilai", nilaiAkhir);
                             cmd.Parameters.AddWithValue("@TanggalDapat", DateTime.Now);
-                            cmd.Parameters.AddWithValue("@IsPrinted", 0); // Default ke 0 (false)
-                            cmd.Parameters.AddWithValue("@CertificateIDuniq", certificateID); // Parameter untuk ID unik
+                            cmd.Parameters.AddWithValue("@IsPrinted", 0);
+                            cmd.Parameters.AddWithValue("@CertificateIDuniq", certificateID);
+
+                            // Tambahkan parameter output untuk mendapatkan kembali ID yang diupdate/dibuat
+                            SqlParameter outputCertIdParam = new SqlParameter("@OutputCertificateID", SqlDbType.Int);
+                            outputCertIdParam.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(outputCertIdParam);
+
                             cmd.ExecuteNonQuery();
+
+                            if (outputCertIdParam.Value != DBNull.Value && outputCertIdParam.Value != null)
+
+                                // Ambil CertificateID yang baru/diupdate dari parameter output
+                                if (outputCertIdParam.Value != DBNull.Value)
+                            {
+                                this.PreviousCertificateID = Convert.ToInt32(outputCertIdParam.Value); // Update previousCertID dengan ID yang baru/diupdate
+                            }
+                            else
+                            {
+                                // Handle case where output is null (e.g., if SP had a problem)
+                                MessageBox.Show("SP SaveCertificate tidak mengembalikan CertificateID. Terjadi masalah.", "Error SP Output", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+
                         }
                     }
                 }
@@ -430,7 +462,8 @@ namespace ITCourseCertificateV001
                 KursusJudul = comboBox1.Text,
                 NilaiAkhir = nilaiAkhir,
                 CertificateIDuniq = certificateID,
-                NamaLengkapUser = GetUserNameForHasilKuis(this.UserID)
+                NamaLengkapUser = GetUserNameForHasilKuis(this.UserID),
+                CertificateID = actualCertificateID
             };
 
             hasilForm.WindowState = FormWindowState.Maximized;

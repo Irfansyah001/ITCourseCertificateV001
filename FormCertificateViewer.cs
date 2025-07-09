@@ -71,6 +71,10 @@ namespace ITCourseCertificateV001
 
                         reportViewer1.LocalReport.ReportPath = rdlcPath;
                         reportViewer1.RefreshReport();
+
+                        this.reportViewer1.ZoomMode = Microsoft.Reporting.WinForms.ZoomMode.Percent;
+                        this.reportViewer1.ZoomPercent = 150;
+
                     }
                 }
             }
@@ -89,7 +93,7 @@ namespace ITCourseCertificateV001
             // Kembali ke FormDashboard (atau halaman lain sesuai alur)
             // Tidak perlu lagi mengambil FullName di sini,
             // FormDashboard akan mengambilnya sendiri jika kosong.
-            FormDashboard dashboard = new FormDashboard
+            FormRiwayatKuis riwayatkuis = new FormRiwayatKuis
             {
                 UserID = this.UserID,
                 // FullName tidak perlu diteruskan jika FormDashboard bisa mengambil sendiri
@@ -99,7 +103,8 @@ namespace ITCourseCertificateV001
             };
 
             this.Hide();
-            dashboard.Show();
+            riwayatkuis.Show();
+            
         }
     }
 }

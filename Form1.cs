@@ -124,8 +124,24 @@ namespace ITCourseCertificateV001
         {
             FormPengaturanIP form = new FormPengaturanIP();
             form.ShowDialog();
-            Koneksi.RefreshConnectionString(); // Memaksa Koneksi.cs untuk membaca ulang file config
-            MessageBox.Show("Pengaturan IP telah diperbarui. Mohon coba login kembali.", "IP Diperbarui", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Koneksi.RefreshConnectionString();
+            MessageBox.Show("Pengaturan IP telah diperbarui. Silahkan untuk mencoba login.", "IP Diperbarui", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void btnQuit_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Apakah Anda yakin ingin keluar dari aplikasi?",
+                "Konfirmasi Keluar",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
+
     }
 }

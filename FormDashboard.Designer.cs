@@ -40,6 +40,25 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1152, 100);
             this.panelTop.TabIndex = 0;
+            //
+            // btnQuit
+            // 
+            this.btnQuit = new System.Windows.Forms.Button();
+            this.btnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuit.BackColor = System.Drawing.Color.Maroon;
+            this.btnQuit.FlatAppearance.BorderSize = 0;
+            this.btnQuit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnQuit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnQuit.ForeColor = System.Drawing.Color.White;
+            this.btnQuit.Location = new System.Drawing.Point(1052, 10);
+            this.btnQuit.Name = "btnQuit";
+            this.btnQuit.Size = new System.Drawing.Size(90, 30);
+            this.btnQuit.TabIndex = 2;
+            this.btnQuit.Text = "Quit";
+            this.btnQuit.UseVisualStyleBackColor = false;
+            this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
+
+            this.panelTop.Controls.Add(this.btnQuit);
             // 
             // lblWelcome
             // 
@@ -213,5 +232,6 @@
         private System.Windows.Forms.Button btnMengelolaKuis;
         private System.Windows.Forms.Button btnSertifikat;
         private System.Windows.Forms.Button btnLogout;
+        private System.Windows.Forms.Button btnQuit;
     }
 }

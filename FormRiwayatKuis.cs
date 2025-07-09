@@ -11,6 +11,7 @@ namespace ITCourseCertificateV001
         //string strKonek = "";
 
         public int UserID { get; set; }
+        public int PreviousCertificateID { get; set; }
 
         public FormRiwayatKuis()
         {
@@ -68,11 +69,26 @@ namespace ITCourseCertificateV001
                         UseColumnTextForButtonValue = true,
                         FlatStyle = FlatStyle.Flat, // Tambahkan style agar terlihat lebih modern
                         DefaultCellStyle = {
-                    BackColor = System.Drawing.Color.LightBlue, // Warna latar belakang tombol
-                    ForeColor = System.Drawing.Color.Black // Warna teks tombol
-                }
+                        BackColor = System.Drawing.Color.LightBlue, // Warna latar belakang tombol
+                        ForeColor = System.Drawing.Color.Black // Warna teks tombol
+                        }
                     };
                     dgvRiwayatKuis.Columns.Add(btnUlangi);
+
+                    DataGridViewButtonColumn btnCertificate = new DataGridViewButtonColumn
+                    {
+                        HeaderText = "Sertifikat",
+                        Name = "CertificateButton",
+                        Text = "Lihat Sertifikat",
+                        UseColumnTextForButtonValue = true,
+                        FlatStyle = FlatStyle.Flat,
+                        DefaultCellStyle = {
+                        BackColor = System.Drawing.Color.LightGreen,
+                        ForeColor = System.Drawing.Color.Black
+                        }
+                    };
+                    dgvRiwayatKuis.Columns.Add(btnCertificate);
+
                 }
 
                 // Format kolom tanggal
@@ -111,6 +127,7 @@ namespace ITCourseCertificateV001
                     // Gunakan operator null-conditional dan null-coalescing untuk keamanan
                     int kursusID = Convert.ToInt32(dgvRiwayatKuis.Rows[e.RowIndex].Cells["KursusID"].Value ?? 0); // Default ke 0 jika null
                     string namaKuis = dgvRiwayatKuis.Rows[e.RowIndex].Cells["NamaKuis"].Value?.ToString() ?? "Kuis Tidak Dikenal";
+                    int previousCertID = Convert.ToInt32(dgvRiwayatKuis.Rows[e.RowIndex].Cells["CertificateID"].Value ?? 0);
 
                     // Perlu mendapatkan FullName pengguna untuk diteruskan ke FormTampilanKerjaKuis
                     // Ini bisa dilakukan dengan memanggil GetUserName() atau menyimpannya di properti global
@@ -131,6 +148,7 @@ namespace ITCourseCertificateV001
                             UserID = this.UserID,
                             // Kita akan mengatur properti FullName di FormTampilanKerjaKuis nanti
                             // jika diperlukan untuk ditampilkan di sana sebelum kuis dimulai.
+                            PreviousCertificateID = previousCertID,
                             StartPosition = FormStartPosition.CenterScreen,
                             WindowState = FormWindowState.Maximized
                         };
@@ -139,6 +157,27 @@ namespace ITCourseCertificateV001
                         ulangKuis.Show();
                     }
                 }
+
+                else if (dgvRiwayatKuis.Columns[e.ColumnIndex].Name == "CertificateButton")
+                {
+                    int certID = Convert.ToInt32(dgvRiwayatKuis.Rows[e.RowIndex].Cells["CertificateID"].Value ?? 0);
+                    if (certID > 0)
+                    {
+                        FormCertificateViewer viewer = new FormCertificateViewer(certID)
+                        {
+                            UserID = this.UserID,
+                            StartPosition = FormStartPosition.CenterScreen,
+                            WindowState = FormWindowState.Maximized
+                        };
+                        this.Hide();
+                        viewer.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Sertifikat tidak ditemukan untuk riwayat ini.", "Sertifikat Tidak Tersedia", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+
             }
             catch (InvalidCastException ex)
             {

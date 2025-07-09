@@ -15,7 +15,6 @@
         private void InitializeComponent()
         {
             this.mainLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.btnPengaturanIP = new System.Windows.Forms.Button();
             this.panelContainer = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -25,6 +24,8 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.btnLogin = new System.Windows.Forms.Button();
             this.pictureBoxLogo = new System.Windows.Forms.PictureBox();
+            this.btnQuit = new System.Windows.Forms.Button();
+            this.btnPengaturanIP = new System.Windows.Forms.Button();
             this.mainLayout.SuspendLayout();
             this.panelContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxLogo)).BeginInit();
@@ -33,29 +34,18 @@
             // mainLayout
             // 
             this.mainLayout.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(40)))), ((int)(((byte)(30)))));
-            this.mainLayout.ColumnCount = 2;
+            this.mainLayout.ColumnCount = 1;
             this.mainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.mainLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.mainLayout.Controls.Add(this.panelContainer, 0, 0);
-            this.mainLayout.Controls.Add(this.btnPengaturanIP, 1, 0);
             this.mainLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainLayout.Location = new System.Drawing.Point(0, 0);
             this.mainLayout.Name = "mainLayout";
             this.mainLayout.RowCount = 1;
             this.mainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.mainLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainLayout.Size = new System.Drawing.Size(1024, 600);
             this.mainLayout.TabIndex = 0;
-            // 
-            // btnPengaturanIP
-            // 
-            this.btnPengaturanIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPengaturanIP.Location = new System.Drawing.Point(931, 3);
-            this.btnPengaturanIP.Name = "btnPengaturanIP";
-            this.btnPengaturanIP.Size = new System.Drawing.Size(90, 30);
-            this.btnPengaturanIP.TabIndex = 0;
-            this.btnPengaturanIP.Text = "Settings IP";
-            this.btnPengaturanIP.UseVisualStyleBackColor = true;
-            this.btnPengaturanIP.Click += new System.EventHandler(this.btnPengaturanIP_Click);
             // 
             // panelContainer
             // 
@@ -70,10 +60,11 @@
             this.panelContainer.Controls.Add(this.txtPassword);
             this.panelContainer.Controls.Add(this.btnLogin);
             this.panelContainer.Controls.Add(this.pictureBoxLogo);
-            this.panelContainer.Location = new System.Drawing.Point(17, 90);
+            this.panelContainer.Location = new System.Drawing.Point(67, 80);
             this.panelContainer.Margin = new System.Windows.Forms.Padding(10);
             this.panelContainer.Name = "panelContainer";
             this.panelContainer.Padding = new System.Windows.Forms.Padding(20);
+            this.mainLayout.SetRowSpan(this.panelContainer, 2);
             this.panelContainer.Size = new System.Drawing.Size(890, 420);
             this.panelContainer.TabIndex = 0;
             // 
@@ -164,11 +155,45 @@
             this.pictureBoxLogo.TabIndex = 0;
             this.pictureBoxLogo.TabStop = false;
             // 
+            // btnQuit
+            // 
+            this.btnQuit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQuit.BackColor = System.Drawing.Color.Maroon;
+            this.btnQuit.FlatAppearance.BorderSize = 0;
+            this.btnQuit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnQuit.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.btnQuit.ForeColor = System.Drawing.Color.White;
+            this.btnQuit.Location = new System.Drawing.Point(924, 10);
+            this.btnQuit.Name = "btnQuit";
+            this.btnQuit.Size = new System.Drawing.Size(90, 30);
+            this.btnQuit.TabIndex = 0;
+            this.btnQuit.Text = "Quit";
+            this.btnQuit.UseVisualStyleBackColor = false;
+            this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
+            // 
+            // btnPengaturanIP
+            // 
+            this.btnPengaturanIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPengaturanIP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(120)))), ((int)(((byte)(100)))));
+            this.btnPengaturanIP.FlatAppearance.BorderSize = 0;
+            this.btnPengaturanIP.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPengaturanIP.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.btnPengaturanIP.ForeColor = System.Drawing.Color.White;
+            this.btnPengaturanIP.Location = new System.Drawing.Point(924, 45);
+            this.btnPengaturanIP.Name = "btnPengaturanIP";
+            this.btnPengaturanIP.Size = new System.Drawing.Size(90, 30);
+            this.btnPengaturanIP.TabIndex = 1;
+            this.btnPengaturanIP.Text = "Settings IP";
+            this.btnPengaturanIP.UseVisualStyleBackColor = false;
+            this.btnPengaturanIP.Click += new System.EventHandler(this.btnPengaturanIP_Click);
+            // 
             // FormLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1024, 600);
+            this.Controls.Add(this.btnQuit);
+            this.Controls.Add(this.btnPengaturanIP);
             this.Controls.Add(this.mainLayout);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimizeBox = false;
@@ -196,5 +221,6 @@
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnPengaturanIP;
+        private System.Windows.Forms.Button btnQuit;
     }
 }
