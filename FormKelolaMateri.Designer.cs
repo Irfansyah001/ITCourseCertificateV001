@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace ITCourseCertificateV001
 {
@@ -17,6 +18,8 @@ namespace ITCourseCertificateV001
         private void InitializeComponent()
         {
             this.panelMain = new System.Windows.Forms.Panel();
+            this.lblAuthor = new System.Windows.Forms.Label();
+            this.txtAuthor = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cmbKursus = new System.Windows.Forms.ComboBox();
             this.labelJudul = new System.Windows.Forms.Label();
@@ -43,6 +46,8 @@ namespace ITCourseCertificateV001
             // panelMain
             // 
             this.panelMain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(40)))), ((int)(((byte)(49)))));
+            this.panelMain.Controls.Add(this.lblAuthor);
+            this.panelMain.Controls.Add(this.txtAuthor);
             this.panelMain.Controls.Add(this.label1);
             this.panelMain.Controls.Add(this.cmbKursus);
             this.panelMain.Controls.Add(this.labelJudul);
@@ -67,6 +72,23 @@ namespace ITCourseCertificateV001
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(1924, 1055);
             this.panelMain.TabIndex = 0;
+            // 
+            // lblAuthor
+            // 
+            this.lblAuthor.AutoSize = true;
+            this.lblAuthor.ForeColor = System.Drawing.Color.White;
+            this.lblAuthor.Location = new System.Drawing.Point(30, 170);
+            this.lblAuthor.Name = "lblAuthor";
+            this.lblAuthor.Size = new System.Drawing.Size(48, 16);
+            this.lblAuthor.TabIndex = 10;
+            this.lblAuthor.Text = "Author:";
+            // 
+            // txtAuthor
+            // 
+            this.txtAuthor.Location = new System.Drawing.Point(150, 167);
+            this.txtAuthor.Name = "txtAuthor";
+            this.txtAuthor.Size = new System.Drawing.Size(380, 22);
+            this.txtAuthor.TabIndex = 19;
             // 
             // label1
             // 
@@ -298,5 +320,7 @@ namespace ITCourseCertificateV001
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnPrintPDF;
         private System.Windows.Forms.Button btnBack;
+        private Label lblAuthor;
+        private TextBox txtAuthor;
     }
 }

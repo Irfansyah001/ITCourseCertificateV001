@@ -1,15 +1,17 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualBasic.ApplicationServices;
-using OfficeOpenXml;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
+using OfficeOpenXml;
 
 
 namespace ITCourseCertificateV001
@@ -144,6 +146,8 @@ namespace ITCourseCertificateV001
                             dgvMateri.Columns["LinkVideo"].DefaultCellStyle.ForeColor = Color.Blue;
                             dgvMateri.Columns["LinkVideo"].DefaultCellStyle.Font = new System.Drawing.Font("Segoe UI", 9, System.Drawing.FontStyle.Underline);
                             dgvMateri.Columns["LinkVideo"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                            dgvMateri.Columns["Author"].HeaderText = "Author";
+                            dgvMateri.Columns["Author"].Visible = true; // atau atur posisi
                         }
                     }
                 }
@@ -164,6 +168,7 @@ namespace ITCourseCertificateV001
             txtLink.Text = "";
             txtDurasi.Text = "";
             txtUrutan.Text = "";
+            txtAuthor.Text = "";
         }
 
         private void btnCreate_Click(object sender, EventArgs e)
@@ -175,7 +180,8 @@ namespace ITCourseCertificateV001
             }
 
             if (string.IsNullOrWhiteSpace(txtJudul.Text) || string.IsNullOrWhiteSpace(txtLink.Text) ||
-                string.IsNullOrWhiteSpace(txtUrutan.Text) || string.IsNullOrWhiteSpace(txtDurasi.Text))
+                string.IsNullOrWhiteSpace(txtUrutan.Text) || string.IsNullOrWhiteSpace(txtDurasi.Text) ||
+                string.IsNullOrWhiteSpace(txtAuthor.Text)) // Tambahkan Author ke validasi
             {
                 MessageBox.Show("Semua kolom harus diisi.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -231,13 +237,14 @@ namespace ITCourseCertificateV001
                     conn.Open();
                     using (SqlTransaction trans = conn.BeginTransaction())
                     {
-                        using (SqlCommand cmd = new SqlCommand("EXEC InsertMateri @kursus, @judul, @link, @urutan, @durasi", conn, trans))
+                        using (SqlCommand cmd = new SqlCommand("EXEC InsertMateri @kursus, @judul, @link, @urutan, @durasi, @author", conn, trans))
                         {
                             cmd.Parameters.AddWithValue("@kursus", cmbKursus.SelectedValue);
                             cmd.Parameters.AddWithValue("@judul", txtJudul.Text.Trim());
                             cmd.Parameters.AddWithValue("@link", txtLink.Text.Trim());
                             cmd.Parameters.AddWithValue("@urutan", urutan);
                             cmd.Parameters.AddWithValue("@durasi", durasi);
+                            cmd.Parameters.AddWithValue("@author", txtAuthor.Text.Trim()); // Tambahkan parameter author jika diperlukan
                             cmd.ExecuteNonQuery();
                             trans.Commit();
                             MessageBox.Show("Materi berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -267,6 +274,7 @@ namespace ITCourseCertificateV001
                 txtLink.Text = row.Cells["LinkVideo"].Value?.ToString();
                 txtDurasi.Text = row.Cells["DurasiMenit"].Value?.ToString();
                 txtUrutan.Text = row.Cells["Urutan"].Value?.ToString();
+                txtAuthor.Text = row.Cells["Author"].Value?.ToString(); // Tambahkan ini jika Author ada di DataGridView
 
                 if (row.Cells["KursusID"].Value != null)
                     cmbKursus.SelectedValue = Convert.ToInt32(row.Cells["KursusID"].Value);
@@ -321,13 +329,14 @@ namespace ITCourseCertificateV001
                     SqlTransaction trans = conn.BeginTransaction();
                     try
                     {
-                        SqlCommand cmd = new SqlCommand("EXEC UpdateMateri @MateriID, @KursusID, @JudulMateri, @LinkVideo, @Urutan, @DurasiMenit", conn, trans);
+                        SqlCommand cmd = new SqlCommand("EXEC UpdateMateri @MateriID, @KursusID, @JudulMateri, @LinkVideo, @Urutan, @DurasiMenit, @Author", conn, trans);
                         cmd.Parameters.AddWithValue("@MateriID", id);
                         cmd.Parameters.AddWithValue("@KursusID", Convert.ToInt32(cmbKursus.SelectedValue));
                         cmd.Parameters.AddWithValue("@JudulMateri", txtJudul.Text.Trim());
                         cmd.Parameters.AddWithValue("@LinkVideo", txtLink.Text.Trim());
                         cmd.Parameters.AddWithValue("@Urutan", urutan);
                         cmd.Parameters.AddWithValue("@DurasiMenit", durasi);
+                        cmd.Parameters.AddWithValue("@Author", txtAuthor.Text.Trim()); // Tambahkan parameter author jika diperlukan
                         cmd.ExecuteNonQuery();
                         trans.Commit();
                     }
@@ -434,7 +443,7 @@ namespace ITCourseCertificateV001
                 {
                     // Pastikan Anda memiliki paket NuGet EPPlus terinstal dengan benar.
                     // Jika Anda menggunakan versi EPPlus 5 ke atas, lisensi non-komersial harus disebutkan.
-                    //ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Tambahkan ini jika perlu
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Tambahkan ini jika perlu
 
                     using (ExcelPackage package = new ExcelPackage(new FileInfo(ofd.FileName)))
                     {
@@ -468,6 +477,7 @@ namespace ITCourseCertificateV001
                                         string link = sheet.Cells[i, 2].Text?.Trim();
                                         string urutanText = sheet.Cells[i, 3].Text?.Trim();
                                         string durasiText = sheet.Cells[i, 4].Text?.Trim();
+                                        string author = sheet.Cells[i, 5].Text?.Trim();
 
                                         // Validasi data dari Excel
                                         if (string.IsNullOrWhiteSpace(judul) || string.IsNullOrWhiteSpace(link) ||
@@ -510,13 +520,14 @@ namespace ITCourseCertificateV001
                                         }
 
 
-                                        using (SqlCommand cmd = new SqlCommand("EXEC InsertMateri @k, @j, @l, @u, @d", conn, trans))
+                                        using (SqlCommand cmd = new SqlCommand("EXEC InsertMateri @k, @j, @l, @u, @d, @a", conn, trans))
                                         {
                                             cmd.Parameters.AddWithValue("@k", cmbKursus.SelectedValue);
                                             cmd.Parameters.AddWithValue("@j", judul);
                                             cmd.Parameters.AddWithValue("@l", link);
                                             cmd.Parameters.AddWithValue("@u", urutan);
                                             cmd.Parameters.AddWithValue("@d", durasi);
+                                            cmd.Parameters.AddWithValue("@a", author ?? ""); // Gunakan author jika ada, atau kosongkan jika tidak ada
                                             cmd.ExecuteNonQuery();
                                             importedCount++;
                                         }
@@ -578,27 +589,26 @@ namespace ITCourseCertificateV001
             {
                 using (StreamWriter writer = new StreamWriter(sfd.FileName))
                 {
-                    for (int i = 0; i < dgvMateri.Columns.Count; i++)
+                    var visibleColumns = dgvMateri.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).ToList();
+
+                    // Header
+                    for (int i = 0; i < visibleColumns.Count; i++)
                     {
-                        if (dgvMateri.Columns[i].Visible)
-                        {
-                            writer.Write(dgvMateri.Columns[i].HeaderText);
-                            if (i < dgvMateri.Columns.Count - 1)
-                                writer.Write(",");
-                        }
+                        writer.Write(visibleColumns[i].HeaderText);
+                        if (i < visibleColumns.Count - 1)
+                            writer.Write(",");
                     }
                     writer.WriteLine();
 
+                    // Data
                     foreach (DataGridViewRow row in dgvMateri.Rows)
                     {
-                        for (int i = 0; i < dgvMateri.Columns.Count; i++)
+                        if (row.IsNewRow) continue;
+                        for (int i = 0; i < visibleColumns.Count; i++)
                         {
-                            if (dgvMateri.Columns[i].Visible)
-                            {
-                                writer.Write(row.Cells[i].Value?.ToString());
-                                if (i < dgvMateri.Columns.Count - 1)
-                                    writer.Write(",");
-                            }
+                            writer.Write(row.Cells[visibleColumns[i].Index].Value?.ToString());
+                            if (i < visibleColumns.Count - 1)
+                                writer.Write(",");
                         }
                         writer.WriteLine();
                     }
@@ -676,6 +686,7 @@ namespace ITCourseCertificateV001
                         // Tambahkan data baris (hanya dari kolom yang terlihat)
                         foreach (DataGridViewRow row in dgvMateri.Rows)
                         {
+                            if (row.IsNewRow) continue;
                             foreach (DataGridViewColumn col in dgvMateri.Columns)
                             {
                                 if (col.Visible)
@@ -709,24 +720,27 @@ namespace ITCourseCertificateV001
                 }
             }
         }
-
-        // Tambahkan metode helper ini untuk mengatur lebar kolom PDF agar sesuai dengan DataGridView
         private float[] GetColumnWidths(DataGridView dgv)
         {
-            float[] widths = new float[dgv.Columns.GetColumnCount(DataGridViewElementStates.Visible)];
-            int visibleIndex = 0;
-            for (int i = 0; i < dgv.Columns.Count; i++)
+            List<float> widths = new List<float>();
+
+            foreach (DataGridViewColumn col in dgv.Columns)
             {
-                if (dgv.Columns[i].Visible)
+                if (col.Visible)
                 {
-                    // Konversi lebar piksel DataGridView ke unit iTextSharp (relatif)
-                    // Ini adalah estimasi, mungkin perlu penyesuaian manual jika hasilnya tidak ideal
-                    widths[visibleIndex] = dgv.Columns[i].Width;
-                    visibleIndex++;
+                    // Buat aturan khusus berdasarkan nama kolom
+                    if (col.HeaderText.Equals("Urutan", StringComparison.OrdinalIgnoreCase))
+                        widths.Add(20f);
+                    else if (col.HeaderText.Equals("DurasiMenit", StringComparison.OrdinalIgnoreCase))
+                        widths.Add(25f);
+                    else
+                        widths.Add(100f);
                 }
             }
-            return widths;
+
+            return widths.ToArray();
         }
+
         private void btnBack_Click(object sender, EventArgs e)
         {
             previousForm.Show();
