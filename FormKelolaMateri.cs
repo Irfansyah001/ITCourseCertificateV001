@@ -98,7 +98,7 @@ namespace ITCourseCertificateV001
                     {
                         System.Diagnostics.Process.Start(url);
                     }
-                    catch (System.ComponentModel.Win32Exception noBrowser)
+                    catch (System.ComponentModel.Win32Exception noBrowsr)
                     {
                         // Terjadi jika tidak ada browser default atau link tidak valid
                         MessageBox.Show("Tidak dapat membuka link. Pastikan Anda memiliki browser terinstal dan link valid.", "Kesalahan Browser", MessageBoxButtons.OK, MessageBoxIcon.Error);
