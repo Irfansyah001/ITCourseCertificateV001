@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
+
 namespace ITCourseCertificateV001
 {
     public partial class FormKelolaMateri : Form
@@ -98,7 +99,7 @@ namespace ITCourseCertificateV001
                     {
                         System.Diagnostics.Process.Start(url);
                     }
-                    catch (System.ComponentModel.Win32Exception noBrowsr)
+                    catch (System.ComponentModel.Win32Exception noBrowser)
                     {
                         // Terjadi jika tidak ada browser default atau link tidak valid
                         MessageBox.Show("Tidak dapat membuka link. Pastikan Anda memiliki browser terinstal dan link valid.", "Kesalahan Browser", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -433,7 +434,7 @@ namespace ITCourseCertificateV001
                 {
                     // Pastikan Anda memiliki paket NuGet EPPlus terinstal dengan benar.
                     // Jika Anda menggunakan versi EPPlus 5 ke atas, lisensi non-komersial harus disebutkan.
-                    // ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Tambahkan ini jika perlu
+                    //ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // Tambahkan ini jika perlu
 
                     using (ExcelPackage package = new ExcelPackage(new FileInfo(ofd.FileName)))
                     {

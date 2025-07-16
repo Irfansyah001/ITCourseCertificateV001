@@ -105,16 +105,42 @@ namespace ITCourseCertificateV001
 
         private void btnMengerjakanKuis_Click(object sender, EventArgs e)
         {
-            FormTampilanKerjaKuis kerjaKuis = new FormTampilanKerjaKuis
-            {
-                UserID = this.UserID,
-                StartPosition = FormStartPosition.CenterScreen,
-                WindowState = FormWindowState.Maximized
-            };
+            // Dialog konfirmasi 1: Apakah user siap mengerjakan?
+            DialogResult confirmResult = MessageBox.Show(
+                "Apakah Anda sudah siap untuk mengerjakan kuis?\n" +
+                "Pastikan Anda memahami materi sebelum memulai.",
+                "Konfirmasi Sebelum Mengerjakan",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
 
-            this.Hide();
-            kerjaKuis.Show();
+            if (confirmResult == DialogResult.Yes)
+            {
+                // Dialog konfirmasi 2: Tidak bisa kembali sebelum selesai
+                DialogResult warningResult = MessageBox.Show(
+                    "Setelah Anda memulai kuis, Anda tidak akan bisa kembali ke Dashboard " +
+                    "sebelum menyelesaikan kuis.\n\nLanjutkan sekarang?",
+                    "Peringatan Penting",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (warningResult == DialogResult.Yes)
+                {
+                    // Jika user menyetujui semua, lanjut ke halaman kuis
+                    FormTampilanKerjaKuis kerjaKuis = new FormTampilanKerjaKuis
+                    {
+                        UserID = this.UserID,
+                        StartPosition = FormStartPosition.CenterScreen,
+                        WindowState = FormWindowState.Maximized
+                    };
+
+                    this.Hide();
+                    kerjaKuis.Show();
+                }
+            }
         }
+
 
         private void btnMengelolaKuis_Click(object sender, EventArgs e)
         {

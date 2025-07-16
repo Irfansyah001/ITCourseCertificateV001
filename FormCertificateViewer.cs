@@ -106,5 +106,24 @@ namespace ITCourseCertificateV001
             riwayatkuis.Show();
             
         }
+
+        private void btnBackToDashboard_Click(object sender, EventArgs e)
+        {
+            FormDashboard dashboard = new FormDashboard
+            {
+                UserID = this.UserID,
+                StartPosition = FormStartPosition.CenterScreen,
+                WindowState = FormWindowState.Maximized
+            };
+
+            this.Hide();
+            dashboard.Show();
+        }
+
+
+        private void tableLayoutPanelMain_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
