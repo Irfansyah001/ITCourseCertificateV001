@@ -1,4 +1,4 @@
-# 📚 IT Course Certificate Management System
+# 📚 IT Course Certificate (ITC)
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/69ea49a6-480c-4245-94aa-6ae5c09664d7" />
 
