@@ -223,6 +223,12 @@ namespace ITCourseCertificateV001
                 return;
             }
 
+            if (durasi < 9)
+            {
+                MessageBox.Show("Durasi materi minimal 9 menit.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string currentConnString = Koneksi.GetConnectionString();
             if (string.IsNullOrEmpty(currentConnString))
             {
@@ -306,9 +312,21 @@ namespace ITCourseCertificateV001
                 return;
             }
 
-            if (!int.TryParse(txtUrutan.Text, out int urutan) || !int.TryParse(txtDurasi.Text, out int durasi))
+            if (!int.TryParse(txtUrutan.Text, out int urutan))
             {
-                MessageBox.Show("Urutan dan durasi harus berupa angka.");
+                MessageBox.Show("Urutan harus berupa angka.", "Kesalahan Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (!int.TryParse(txtDurasi.Text, out int durasi))
+            {
+                MessageBox.Show("Durasi harus berupa angka.", "Kesalahan Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (durasi < 9)
+            {
+                MessageBox.Show("Durasi materi minimal 9 menit.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

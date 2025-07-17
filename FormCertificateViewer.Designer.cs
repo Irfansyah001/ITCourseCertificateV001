@@ -28,7 +28,7 @@
             this.btnBack.Name = "btnBack";
             this.btnBack.Size = new System.Drawing.Size(175, 34);
             this.btnBack.TabIndex = 1;
-            this.btnBack.Text = "Go to Riwayat Kuis";
+            this.btnBack.Text = "Menuju ke Riwayat Kuis";
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
@@ -59,7 +59,7 @@
             this.btnBackToDashboard.Name = "btnBackToDashboard";
             this.btnBackToDashboard.Size = new System.Drawing.Size(172, 34);
             this.btnBackToDashboard.TabIndex = 2;
-            this.btnBackToDashboard.Text = "Back to Dashboard";
+            this.btnBackToDashboard.Text = "Kembali ke Dashboard";
             this.btnBackToDashboard.UseVisualStyleBackColor = true;
             this.btnBackToDashboard.Click += new System.EventHandler(this.btnBackToDashboard_Click);
             // 
