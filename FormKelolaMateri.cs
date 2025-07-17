@@ -241,6 +241,20 @@ namespace ITCourseCertificateV001
                 using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
+
+                    // CEK apakah link sudah ada di database
+                    using (SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Materi WHERE LinkVideo = @link", conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@link", txtLink.Text.Trim());
+                        int existingCount = (int)checkCmd.ExecuteScalar();
+
+                        if (existingCount > 0)
+                        {
+                            MessageBox.Show("Link video ini sudah pernah ditambahkan sebelumnya.\nSilakan gunakan link yang berbeda.", "Duplikasi Link YouTube", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+
                     using (SqlTransaction trans = conn.BeginTransaction())
                     {
                         using (SqlCommand cmd = new SqlCommand("EXEC InsertMateri @kursus, @judul, @link, @urutan, @durasi, @author", conn, trans))
@@ -344,6 +358,21 @@ namespace ITCourseCertificateV001
                 using (SqlConnection conn = new SqlConnection(currentConnString))
                 {
                     conn.Open();
+
+                    using (SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM Materi WHERE LinkVideo = @link AND MateriID <> @id", conn))
+                    {
+                        checkCmd.Parameters.AddWithValue("@link", txtLink.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@id", id);
+
+                        int existingCount = (int)checkCmd.ExecuteScalar();
+
+                        if (existingCount > 0)
+                        {
+                            MessageBox.Show("Link video ini sudah digunakan oleh materi lain.\nSilakan gunakan link yang berbeda.", "Duplikasi Link", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+
                     SqlTransaction trans = conn.BeginTransaction();
                     try
                     {
